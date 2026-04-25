@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 load_dotenv()
 
 
-#Obtener URL desde .env
+#Obtener URL desde .env a PostgreSQL
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 #crear engine (conexion)
