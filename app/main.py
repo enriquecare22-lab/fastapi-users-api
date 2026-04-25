@@ -6,8 +6,8 @@ from app.database import engine, Base,SessionLocal
 
 #importamos modelos y schemas
 from app import models
-from app.models import User
-from app.schemas import UserCreate
+from app.models.user import User
+from app.schemas.user import UserCreate
 
 #Crear tablas en la base de datos
 Base.metadata.create_all(bind=engine)
