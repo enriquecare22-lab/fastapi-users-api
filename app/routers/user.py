@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.schemas.user import UserCreate, UserLogin, UserResponse
-from app.services.user_service import create_user, login_user
+from app.services.user_service import create_user, login_user, get_all_users
 
 # ROUTER (NDPOINTS)
 #---------------
 
-router = APIRouter
+router = APIRouter()
 
 #Dependecy para obtener conexion a DB
 def get_db():
@@ -19,19 +19,23 @@ def get_db():
 
 
 #REGISTER
-
+print("estoy aqui")
 @router.post("/register")
-def register(user: UserCreate, db:Session =Depends(get_db)):
+def register(user: UserCreate, db: Session = Depends(get_db)):
+    print(register)
     """
     Endpoit para registrar usuario
     """
-    create_user(db, user.name,user.email, user.password)
+    new_user = create_user(db, user.name, user.email, user.password)
+    if not new_user:
+        raise HTTPException(status_code=400, detail="El usuario ya existe")
+    
     return {"message" : "Usuario creado correctamente" }
 
 #LOGIN
 
 @router.post("/login")
-def login(user:UserLogin, db: Session= Depends(get_db)):
+def login(user: UserLogin, db: Session = Depends(get_db)):
     """
     Endpoint de autenticacion
     Devueleve JWT si las credenciales son correctas
@@ -39,7 +43,7 @@ def login(user:UserLogin, db: Session= Depends(get_db)):
     token = login_user(db, user.email, user.password)
 
     if not token:
-        raise HTTPException(status_code=400, detail="CRedenciales inválidas")
+        raise HTTPException(status_code = 400, detail="Credenciales inválidas")
     
     return {
         "access_token": token,
@@ -54,5 +58,5 @@ def get_users(db: Session = Depends(get_db)):
     """
     Devueleve lista de usuarios (sin password)
     """
-    return db.query(User).all()
+    return get_all_users(db)
 
