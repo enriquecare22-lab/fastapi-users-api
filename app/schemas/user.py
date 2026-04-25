@@ -1,10 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 #Schemas para crear usuario (entrada)
 class UserCreate(BaseModel):
     name: str
     email: str
-    password: str
+    password: str = Field(..., min_length=6, max_length=72)
 
 class UserLogin(BaseModel):
     email: str
